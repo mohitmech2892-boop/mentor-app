@@ -83,6 +83,36 @@
     .book-btn:hover {
       background: #4338ca;
     }
+
+    /* Landing page (logged-out) styles */
+    .landing {
+      text-align: center;
+      padding: 100px 20px;
+    }
+    .landing h1 {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+    .landing p {
+      color: #555;
+      font-size: 18px;
+      max-width: 500px;
+      margin: 0 auto 30px;
+    }
+    .landing .cta-btn {
+      padding: 14px 32px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .landing .cta-btn:hover {
+      background: #4338ca;
+    }
   </style>
 </head>
 <body>
@@ -93,9 +123,8 @@
     </div>
   </div>
 
-  <div class="content">
-    <h1>Find Your Mentor</h1>
-    <div class="mentor-grid" id="mentorGrid">Loading mentors...</div>
+  <div class="content" id="mainContent">
+    <!-- filled in by JS: landing page OR mentor grid -->
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -104,31 +133,26 @@
     const SUPABASE_KEY = "sb_publishable_fNZHejAa5W4dxGPlyHYKBA_TCF0sOYP";
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const grid = document.getElementById("mentorGrid");
     const navLinks = document.getElementById("navLinks");
+    const mainContent = document.getElementById("mainContent");
 
-    async function updateNav() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-
-      if (session) {
-        navLinks.innerHTML = `
-          <span>${session.user.email}</span>
-          <a onclick="logOut()">Log Out</a>
-        `;
-      } else {
-        navLinks.innerHTML = `
-          <a href="Login.html">Sign In</a>
-          <a href="Signup.html">Sign Up</a>
-        `;
-      }
+    function showLandingPage() {
+      mainContent.innerHTML = `
+        <div class="landing">
+          <h1>Find Your Mentor. Land Your Dream Job.</h1>
+          <p>Connect with industry professionals for mock interviews, career advice, and real talk about what it's actually like working at top companies.</p>
+          <a href="Signup.html" class="cta-btn">Get Started</a>
+        </div>
+      `;
     }
 
-    async function logOut() {
-      await supabaseClient.auth.signOut();
-      updateNav();
-    }
+    async function showMentorGrid() {
+      mainContent.innerHTML = `
+        <h1>Find Your Mentor</h1>
+        <div class="mentor-grid" id="mentorGrid">Loading mentors...</div>
+      `;
+      const grid = document.getElementById("mentorGrid");
 
-    async function loadMentors() {
       const { data, error } = await supabaseClient.from("Mentor").select("*");
 
       if (error) {
@@ -152,8 +176,30 @@
       });
     }
 
+    async function updateNav() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        navLinks.innerHTML = `
+          <span>${session.user.email}</span>
+          <a onclick="logOut()">Log Out</a>
+        `;
+        showMentorGrid();
+      } else {
+        navLinks.innerHTML = `
+          <a href="Login.html">Sign In</a>
+          <a href="Signup.html">Sign Up</a>
+        `;
+        showLandingPage();
+      }
+    }
+
+    async function logOut() {
+      await supabaseClient.auth.signOut();
+      updateNav();
+    }
+
     updateNav();
-    loadMentors();
   </script>
 </body>
 </html>
