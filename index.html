@@ -62,31 +62,41 @@
 </head>
 <body>
   <h1>Find Your Mentor</h1>
-  <div class="mentor-grid" id="mentorGrid"></div>
+  <div class="mentor-grid" id="mentorGrid">Loading mentors...</div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const mentors = [
-      { name: "Priya Sharma", role: "Software Engineer @ Google", experience: "5 yrs experience" },
-      { name: "Rahul Mehta", role: "Product Manager @ Amazon", experience: "7 yrs experience" },
-      { name: "Ananya Iyer", role: "Data Scientist @ Microsoft", experience: "4 yrs experience" },
-      { name: "Vikram Rao", role: "iOS Developer @ Apple", experience: "3 yrs experience" },
-      { name: "Sneha Kapoor", role: "iOS Developer @ Apple", experience: "3 yrs experience" }
-    ];
+    const SUPABASE_URL = "https://ghmbpejvmdisssbpbcrm.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_fNZHejAa5W4dxGPlyHYKBA_TCF0sOYP";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const grid = document.getElementById("mentorGrid");
 
-    mentors.forEach(mentor => {
-      const card = document.createElement("div");
-      card.className = "mentor-card";
-      card.innerHTML = `
-        <img src="https://via.placeholder.com/80" alt="${mentor.name}">
-        <h3>${mentor.name}</h3>
-        <p>${mentor.role}</p>
-        <p>${mentor.experience}</p>
-        <button class="book-btn">Book Session</button>
-      `;
-      grid.appendChild(card);
-    });
+    async function loadMentors() {
+      const { data, error } = await supabaseClient.from("Mentor").select("*");
+
+      if (error) {
+        grid.innerHTML = "Error loading mentors: " + error.message;
+        console.error(error);
+        return;
+      }
+
+      grid.innerHTML = "";
+      data.forEach(mentor => {
+        const card = document.createElement("div");
+        card.className = "mentor-card";
+        card.innerHTML = `
+          <img src="https://via.placeholder.com/80" alt="${mentor.Name}">
+          <h3>${mentor.Name}</h3>
+          <p>${mentor.Role}</p>
+          <p>${mentor.Experience}</p>
+          <button class="book-btn">Book Session</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    loadMentors();
   </script>
 </body>
 </html>
