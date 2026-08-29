@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Bookings - MentorConnect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f7;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background: white;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .navbar h2 {
+      margin: 0;
+      color: #1a1a2e;
+    }
+    .nav-links a, .nav-links span {
+      margin-left: 16px;
+      color: #4f46e5;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      padding: 40px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #1a1a2e;
+    }
+    .booking-list {
+      margin-top: 30px;
+    }
+    .booking-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .booking-card h3 {
+      margin: 0 0 4px;
+      color: #1a1a2e;
+    }
+    .booking-card p {
+      color: #666;
+      font-size: 14px;
+      margin: 0;
+    }
+    .empty-state {
+      text-align: center;
+      color: #888;
+      margin-top: 60px;
+    }
+    .empty-state a {
+      color: #4f46e5;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <h2>MentorConnect</h2>
+    <div class="nav-links" id="navLinks"></div>
+  </div>
+
+  <div class="content">
+    <h1>My Bookings</h1>
+    <div class="booking-list" id="bookingList">Loading...</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://ghmbpejvmdisssbpbcrm.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_fNZHejAa5W4dxGPlyHYKBA_TCF0sOYP";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const navLinks = document.getElementById("navLinks");
+    const bookingList = document.getElementById("bookingList");
+
+    async function updateNav() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (!session) {
+        window.location.href = "Login.html";
+        return;
+      }
+
+      navLinks.innerHTML = `
+        <a href="index.html">Home</a>
+        <span>${session.user.email}</span>
+        <a onclick="logOut()">Log Out</a>
+      `;
+
+      loadBookings(session.user.email);
+    }
+
+    async function logOut() {
+      await supabaseClient.auth.signOut();
+      window.location.href = "index.html";
+    }
+
+    async function loadBookings(email) {
+      const { data, error } = await supabaseClient
+        .from("Bookings")
+        .select("*")
+        .eq("student_email", email)
+        .order("booking_date", { ascending: true });
+
+      if (error) {
+        bookingList.innerHTML = "Error loading bookings: " + error.message;
+        console.error(error);
+        return;
+      }
+
+      if (data.length === 0) {
+        bookingList.innerHTML = `
+          <div class="empty-state">
+            <p>You haven't booked any sessions yet.</p>
+            <a href="index.html">Browse mentors →</a>
+          </div>
+        `;
+        return;
+      }
+
+      bookingList.innerHTML = "";
+      data.forEach(booking => {
+        const card = document.createElement("div");
+        card.className = "booking-card";
+        card.innerHTML = `
+          <div>
+            <h3>${booking.mentor_name}</h3>
+            <p>${booking.booking_date} at ${booking.booking_time}</p>
+          </div>
+        `;
+        bookingList.appendChild(card);
+      });
+    }
+
+    updateNav();
+  </script>
+</body>
+</html>

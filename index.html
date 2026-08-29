@@ -4,171 +4,251 @@
   <meta charset="UTF-8">
   <title>MentorConnect</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f7;
-      margin: 0;
-      padding: 0;
-    }
-    .navbar {
-      background: white;
-      padding: 16px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-    }
-    .navbar h2 {
-      margin: 0;
-      color: #1a1a2e;
-    }
-    .nav-links a, .nav-links span {
-      margin-left: 16px;
-      color: #4f46e5;
-      text-decoration: none;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .nav-links a:hover {
-      text-decoration: underline;
-    }
-    .content {
-      padding: 40px;
-    }
-    h1 {
-      text-align: center;
-      color: #1a1a2e;
-    }
-    .mentor-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      margin-top: 30px;
-    }
-    .mentor-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      width: 260px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    .mentor-card img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: #ddd;
-      margin-bottom: 12px;
-    }
-    .mentor-card h3 {
-      margin: 8px 0 4px;
-      color: #1a1a2e;
-    }
-    .mentor-card p {
-      color: #666;
-      font-size: 14px;
-      margin: 4px 0;
-    }
-    .book-btn {
-      margin-top: 12px;
-      padding: 8px 20px;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .book-btn:hover {
-      background: #4338ca;
-    }
+    * {
+  box-sizing: border-box;
+}
 
-    .landing {
-      text-align: center;
-      padding: 100px 20px;
-    }
-    .landing h1 {
-      font-size: 42px;
-      margin-bottom: 12px;
-    }
-    .landing p {
-      color: #555;
-      font-size: 18px;
-      max-width: 500px;
-      margin: 0 auto 30px;
-    }
-    .landing .cta-btn {
-      padding: 14px 32px;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .landing .cta-btn:hover {
-      background: #4338ca;
-    }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+  background: #fafafa;
+  margin: 0;
+  padding: 0;
+  color: #1a1a2e;
+}
 
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4);
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-    }
-    .modal-overlay.open {
-      display: flex;
-    }
-    .modal-box {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      width: 300px;
-    }
-    .modal-box h3 {
-      margin-top: 0;
-      color: #1a1a2e;
-    }
-    .modal-box input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      box-sizing: border-box;
-      font-size: 14px;
-    }
-    .modal-box button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .modal-confirm {
-      background: #4f46e5;
-      color: white;
-    }
-    .modal-confirm:hover {
-      background: #4338ca;
-    }
-    .modal-cancel {
-      background: #eee;
-      color: #333;
-    }
-    #modalMessage {
-      text-align: center;
-      font-size: 13px;
-      margin-top: 8px;
-    }
+.navbar {
+  background: white;
+  padding: 18px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nav-links a, .nav-links span {
+  margin-left: 20px;
+  color: #444;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.nav-links a:hover {
+  color: #4f46e5;
+}
+
+.content {
+  padding: 48px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.mentor-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.mentor-card {
+  background: white;
+  border-radius: 16px;
+  padding: 28px 24px;
+  width: 260px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mentor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(79,70,229,0.12);
+}
+
+.mentor-card img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #eee;
+  margin-bottom: 16px;
+}
+
+.mentor-card h3 {
+  margin: 8px 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.mentor-card p {
+  color: #777;
+  font-size: 13.5px;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+.book-btn {
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.book-btn:hover {
+  background: #4338ca;
+  transform: scale(1.03);
+}
+
+.landing {
+  text-align: center;
+  padding: 120px 20px;
+}
+
+.landing h1 {
+  font-size: 48px;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.landing p {
+  color: #666;
+  font-size: 18px;
+  max-width: 520px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+
+.landing .cta-btn {
+  padding: 16px 36px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 8px 20px rgba(79,70,229,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.landing .cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(79,70,229,0.32);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(20,20,30,0.5);
+  backdrop-filter: blur(2px);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  width: 300px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.modal-box h3 {
+  margin-top: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.modal-box input {
+  width: 100%;
+  padding: 11px;
+  margin: 8px 0;
+  border: 1.5px solid #eee;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+  transition: border-color 0.15s ease;
+}
+
+.modal-box input:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.modal-box button {
+  width: 100%;
+  padding: 11px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.modal-confirm {
+  background: #4f46e5;
+  color: white;
+}
+
+.modal-confirm:hover {
+  background: #4338ca;
+}
+
+.modal-cancel {
+  background: #f4f4f5;
+  color: #444;
+}
+
+.modal-cancel:hover {
+  background: #eaeaea;
+}
+
+#modalMessage {
+  text-align: center;
+  font-size: 13px;
+  margin-top: 8px;
+}
   </style>
 </head>
 <body>
@@ -292,9 +372,10 @@
       if (session) {
         currentUserEmail = session.user.email;
         navLinks.innerHTML = `
-          <span>${session.user.email}</span>
-          <a onclick="logOut()">Log Out</a>
-        `;
+  <a href="mybookings.html">My Bookings</a>
+  <span>${session.user.email}</span>
+  <a onclick="logOut()">Log Out</a>
+`;
         showMentorGrid();
       } else {
         navLinks.innerHTML = `
