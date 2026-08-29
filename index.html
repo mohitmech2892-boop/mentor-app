@@ -84,7 +84,6 @@
       background: #4338ca;
     }
 
-    /* Landing page (logged-out) styles */
     .landing {
       text-align: center;
       padding: 100px 20px;
@@ -113,18 +112,82 @@
     .landing .cta-btn:hover {
       background: #4338ca;
     }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-box {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 300px;
+    }
+    .modal-box h3 {
+      margin-top: 0;
+      color: #1a1a2e;
+    }
+    .modal-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .modal-box button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .modal-confirm {
+      background: #4f46e5;
+      color: white;
+    }
+    .modal-confirm:hover {
+      background: #4338ca;
+    }
+    .modal-cancel {
+      background: #eee;
+      color: #333;
+    }
+    #modalMessage {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
   <div class="navbar">
     <h2>MentorConnect</h2>
-    <div class="nav-links" id="navLinks">
-      <!-- filled in by JS depending on login state -->
-    </div>
+    <div class="nav-links" id="navLinks"></div>
   </div>
 
-  <div class="content" id="mainContent">
-    <!-- filled in by JS: landing page OR mentor grid -->
+  <div class="content" id="mainContent"></div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <h3 id="modalMentorName">Book Session</h3>
+      <input type="date" id="bookingDate">
+     <input type="time" id="bookingTime">
+      <button class="modal-confirm" onclick="confirmBooking()">Confirm Booking</button>
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <div id="modalMessage"></div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -135,6 +198,12 @@
 
     const navLinks = document.getElementById("navLinks");
     const mainContent = document.getElementById("mainContent");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalMentorName = document.getElementById("modalMentorName");
+    const modalMessage = document.getElementById("modalMessage");
+
+    let selectedMentorName = "";
+    let currentUserEmail = "";
 
     function showLandingPage() {
       mainContent.innerHTML = `
@@ -170,16 +239,58 @@
           <h3>${mentor.Name}</h3>
           <p>${mentor.Role}</p>
           <p>${mentor.Experience}</p>
-          <button class="book-btn">Book Session</button>
+          <button class="book-btn" onclick="openModal('${mentor.Name}')">Book Session</button>
         `;
         grid.appendChild(card);
       });
+    }
+
+    function openModal(mentorName) {
+      selectedMentorName = mentorName;
+      modalMentorName.textContent = "Book with " + mentorName;
+      modalMessage.textContent = "";
+      document.getElementById("bookingDate").value = "";
+      document.getElementById("bookingTime").value = "";
+      modalOverlay.classList.add("open");
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove("open");
+    }
+
+    async function confirmBooking() {
+      const date = document.getElementById("bookingDate").value;
+      const time = document.getElementById("bookingTime").value;
+
+      if (!date || !time) {
+        modalMessage.style.color = "red";
+        modalMessage.textContent = "Please fill in both date and time.";
+        return;
+      }
+
+      const { error } = await supabaseClient.from("Bookings").insert({
+        mentor_name: selectedMentorName,
+        student_email: currentUserEmail,
+        booking_date: date,
+        booking_time: time
+      });
+
+      if (error) {
+        modalMessage.style.color = "red";
+        modalMessage.textContent = "Error: " + error.message;
+        console.error(error);
+      } else {
+        modalMessage.style.color = "green";
+        modalMessage.textContent = "Booked! Closing...";
+        setTimeout(closeModal, 1200);
+      }
     }
 
     async function updateNav() {
       const { data: { session } } = await supabaseClient.auth.getSession();
 
       if (session) {
+        currentUserEmail = session.user.email;
         navLinks.innerHTML = `
           <span>${session.user.email}</span>
           <a onclick="logOut()">Log Out</a>
