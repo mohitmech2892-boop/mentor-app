@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Courses - MentorPathways</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f7;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background: white;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .navbar h2 {
+      margin: 0;
+      color: #1a1a2e;
+    }
+    .nav-links a, .nav-links span {
+      margin-left: 16px;
+      color: #4f46e5;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #1a1a2e;
+    }
+    .course-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .course-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 280px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .course-card h3 {
+      margin: 0 0 8px;
+      color: #1a1a2e;
+    }
+    .course-card p {
+      color: #666;
+      font-size: 14px;
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <h2>MentorPathways</h2>
+    <div class="nav-links" id="navLinks"></div>
+  </div>
+
+  <div class="content">
+    <h1>Courses</h1>
+    <div class="course-grid" id="courseGrid">Loading courses...</div>
+  </div>
+
+  <footer>
+    This is a demo project — please don't enter real personal information.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://ghmbpejvmdisssbpbcrm.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_fNZHejAa5W4dxGPlyHYKBA_TCF0sOYP";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const navLinks = document.getElementById("navLinks");
+    const courseGrid = document.getElementById("courseGrid");
+
+    async function updateNav() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        navLinks.innerHTML = `
+          <a href="index.html">Home</a>
+          <a href="mybookings.html">My Bookings</a>
+          <span>${session.user.email}</span>
+          <a onclick="logOut()">Log Out</a>
+        `;
+      } else {
+        navLinks.innerHTML = `
+          <a href="index.html">Home</a>
+          <a href="Login.html">Sign In</a>
+          <a href="Signup.html">Sign Up</a>
+        `;
+      }
+    }
+
+    async function logOut() {
+      await supabaseClient.auth.signOut();
+      updateNav();
+    }
+
+    async function loadCourses() {
+      const { data, error } = await supabaseClient.from("Courses").select("*");
+
+      if (error) {
+        courseGrid.innerHTML = "Error loading courses: " + error.message;
+        console.error(error);
+        return;
+      }
+
+      courseGrid.innerHTML = "";
+      data.forEach(course => {
+        const card = document.createElement("div");
+        card.className = "course-card";
+        card.innerHTML = `
+          <h3>${course.title}</h3>
+          <p>${course.description}</p>
+          <div class="course-meta">
+            <span>${course.instructor}</span>
+            <span>${course.duration}</span>
+          </div>
+        `;
+        courseGrid.appendChild(card);
+      });
+    }
+
+    updateNav();
+    loadCourses();
+  </script>
+</body>
+</html>

@@ -375,6 +375,7 @@ const { error } = await supabaseClient.from("Bookings").insert({
       if (session) {
         currentUserEmail = session.user.email;
         navLinks.innerHTML = `
+  <a href="courses.html">Courses</a>
   <a href="mybookings.html">My Bookings</a>
   <span>${session.user.email}</span>
   <a onclick="logOut()">Log Out</a>
@@ -382,6 +383,7 @@ const { error } = await supabaseClient.from("Bookings").insert({
         showMentorGrid();
       } else {
         navLinks.innerHTML = `
+        <a href="courses.html">Courses</a>
           <a href="Login.html">Sign In</a>
           <a href="Signup.html">Sign Up</a>
         `;
