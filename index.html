@@ -348,12 +348,15 @@ h1 {
         return;
       }
 
-      const { error } = await supabaseClient.from("Bookings").insert({
-        mentor_name: selectedMentorName,
-        student_email: currentUserEmail,
-        booking_date: date,
-        booking_time: time
-      });
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+const { error } = await supabaseClient.from("Bookings").insert({
+  mentor_name: selectedMentorName,
+  student_email: currentUserEmail,
+  user_id: session.user.id,
+  booking_date: date,
+  booking_time: time
+});
 
       if (error) {
         modalMessage.style.color = "red";
